@@ -1794,7 +1794,7 @@ namespace ModelCompiler
                 dictionary.Historizing = false;
                 dictionary.HistorizingSpecified = true;
 
-                if (!EmbeddedModelDesignPath.EndsWith("v103"))
+                if (!EmbeddedModelDesignPath.EndsWith("v104"))
                 {
                     dictionary.ReleaseStatus = ReleaseStatus.Deprecated;
                 }
@@ -1830,7 +1830,7 @@ namespace ModelCompiler
                     namespaceUri,
                     descriptions);
 
-                if (!EmbeddedModelDesignPath.EndsWith("v103"))
+                if (!EmbeddedModelDesignPath.EndsWith("v104"))
                 {
                     AddProperty(
                         dictionary,
@@ -1984,7 +1984,7 @@ namespace ModelCompiler
                     description.DecodedValue = Utils.Format("{0}", dataType.SymbolicName.Name);
                 }
 
-                if (description.ReleaseStatus == ReleaseStatus.Released && !EmbeddedModelDesignPath.EndsWith("v103"))
+                if (description.ReleaseStatus == ReleaseStatus.Released && !EmbeddedModelDesignPath.EndsWith("v104"))
                 {
                     description.ReleaseStatus = ReleaseStatus.Deprecated;
                 }
