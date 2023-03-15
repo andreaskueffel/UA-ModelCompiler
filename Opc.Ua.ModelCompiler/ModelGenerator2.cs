@@ -5258,7 +5258,7 @@ namespace ModelCompiler
                         return "false";
                     }
 
-                    return "true";
+                    return "false";
                 }
 
                 case BasicDataType.SByte:
