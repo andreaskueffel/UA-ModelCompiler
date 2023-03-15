@@ -2675,6 +2675,8 @@ namespace ModelCompiler
             string externalPrefix = GetNamespacePrefix(ns.Value);
 
             template.WriteNextLine(context.Prefix);
+            template.Write("using {0};", "Opc.UaFx");
+            template.WriteNextLine(context.Prefix);
             template.Write("using {0};", externalPrefix);
 
             return null;
@@ -2714,7 +2716,7 @@ namespace ModelCompiler
 
                         if (GetBaseClassName(datatype) == "IEncodeable")
                         {
-                            return TemplatePath + "Version2.DataTypes.Class.cs";
+                            return TemplatePath + "Version2.DataTypes.Class2.cs";
                         }
 
                         return TemplatePath + "Version2.DataTypes.DerivedClass.cs";
@@ -2958,7 +2960,7 @@ namespace ModelCompiler
                 AddTemplate(
                     template,
                     "// CollectionClass",
-                    TemplatePath + "Version2.DataTypes.CollectionClass.cs",
+                    TemplatePath + "Version2.DataTypes.CollectionClass2.cs",
                     new DataTypeDesign[] { dataType },
                     new LoadTemplateEventHandler(LoadTemplate_CollectionClass),
                     new WriteTemplateEventHandler(WriteTemplate_CollectionClass));
@@ -2995,7 +2997,7 @@ namespace ModelCompiler
                     template.AddReplacement("<BaseT>", GetTemplateParameter(variableType));
                 }
 
-                template.AddReplacement("_DefaultValue_", GetDefaultValue(variableType.DataTypeNode, variableType.ValueRank, variableType.DefaultValue, variableType.DecodedValue, false));
+                template.AddReplacement("_DefaultValue_", GetDefaultValue(variableType.DataTypeNode, variableType.ValueRank, variableType.DefaultValue, variableType.DecodedValue, false, variableType.ArrayDimensions));
                 template.AddReplacement("_ValueRank_", GetValueRank(variableType.ValueRank, variableType.ArrayDimensions));
                 template.AddReplacement("_ArrayDimensions_", GetArrayDimensions(variableType.ValueRank, variableType.ArrayDimensions));
                 template.AddReplacement("_IsAbstract_", GetBooleanValue(variableType.IsAbstract));
@@ -4189,8 +4191,8 @@ namespace ModelCompiler
             {
                 return null;
             }
-
-            var value = GetDefaultValue(field.DataTypeNode, field.ValueRank, field.DefaultValue, null, true);
+            
+            var value = GetDefaultValue(field.DataTypeNode, field.ValueRank, field.DefaultValue, null, true, field.ArrayDimensions);
 
             template.WriteNextLine(context.Prefix);
             template.Write("{0} = {1};", GetChildFieldName(field), value);
@@ -4452,7 +4454,7 @@ namespace ModelCompiler
                 template.AddReplacement("_IsRequired_", (valueType) ? "true" : "false");
                 template.AddReplacement(", EmitDefaultValue = _EmitDefaultValue_", (emitDefaultValue) ? "" : ", EmitDefaultValue = false");
                 template.AddReplacement("_FieldIndex_", Utils.Format("{0}", context.Index + 1));
-                template.AddReplacement("_DefaultValue_", GetDefaultValue(field.DataTypeNode, field.ValueRank, null, null, true));
+                template.AddReplacement("_DefaultValue_", GetDefaultValue(field.DataTypeNode, field.ValueRank, null, null, true, field.ArrayDimensions));
                 template.AddReplacement("_Identifier_", field.Identifier.ToString());
 
                 if (field.IdentifierInName)
@@ -5174,7 +5176,8 @@ namespace ModelCompiler
             ValueRank valueRank,
             XmlElement defaultValue,
             object decodedValue,
-            bool useVariantForObject)
+            bool useVariantForObject,
+            string arrayDimensions)
         {
             if (valueRank == ValueRank.Array)
             {
@@ -5183,7 +5186,29 @@ namespace ModelCompiler
                     return "null";
                 }
 
-                return Utils.Format("new {0}()", GetSystemTypeName(dataType, valueRank));
+                var name = GetSystemTypeName(dataType, valueRank);
+                if (name.EndsWith("[]"))
+                {
+                    try
+                    {
+                        var className = name.Replace("[]", "");
+                        int arrayLength = int.Parse(arrayDimensions);
+                        name = className + $"[{arrayDimensions}]"+ " { ";
+                        for(int i=0; i<arrayLength; i++)
+                        {
+                            name += $"new {className}(),";
+                        }
+                        name = name.TrimEnd(',') + " }";
+
+                    }
+                    catch //In case we have multiple dimensions or anything else that is not parsable to single dimension length
+                    {
+                        name = name.Replace("[]", "[1]{ new " + name.Replace("[]", "") + "()}");
+                    }
+                }
+                else
+                    name = name + "()";
+                return Utils.Format("new {0}", name);
             }
 
             if (dataType.BasicDataType == BasicDataType.BaseDataType || valueRank != ValueRank.Scalar)
@@ -5365,7 +5390,7 @@ namespace ModelCompiler
 
                     if (value == null)
                     {
-                        return "null";
+                        return "\"\"";
                     }
 
                     return Utils.Format("\"{0}\"", value);
@@ -5738,7 +5763,7 @@ namespace ModelCompiler
 
                     case BasicDataType.UserDefined:
                     {
-                        return datatype.SymbolicName.Name + "Collection";
+                        return datatype.SymbolicName.Name + "[]";
                     }
                 }
             }

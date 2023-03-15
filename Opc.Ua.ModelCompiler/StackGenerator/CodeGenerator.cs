@@ -362,7 +362,7 @@ namespace CodeGenerator
 
             if (valueRank >= 0)
             {
-                return String.Format("{0}Collection", type);
+                return String.Format("{0}[]", type);
             }
 
             return type;
