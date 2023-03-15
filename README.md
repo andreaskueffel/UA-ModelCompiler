@@ -1,3 +1,6 @@
+# This fork has adaptions for DVS OPC UA Server #
+It is not intended for public use as these adaptions are special.
+
 # Model Compiler #
 The [OPC Foundation](https://opcfoundation.org) Model Compiler will generate C# and ANSI C source code from XML files which include the UA Services, data-types, error codes, etc.; and numerous CSV files that contain NodeIds, error codes, and attributes etc.
 
