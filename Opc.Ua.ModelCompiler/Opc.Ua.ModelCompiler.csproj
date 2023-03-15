@@ -3,6 +3,9 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
+	<RuntimeIdentifiers>win-x86;linux-x64</RuntimeIdentifiers>
+	<PublishSingleFile>true</PublishSingleFile>
+	<PublishTrimmed>true</PublishTrimmed>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <IntermediateOutputPath>$(SolutionDir)build\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
@@ -119,8 +122,10 @@
     <Compile Remove="Templates\Version2\CreateVariableChild.cs" />
     <Compile Remove="Templates\Version2\DataTypes\ArrayProperty.cs" />
     <Compile Remove="Templates\Version2\DataTypes\Class.cs" />
+    <Compile Remove="Templates\Version2\DataTypes\Class2.cs" />
     <Compile Remove="Templates\Version2\DataTypes\ClassWithOptionalFields.cs" />
     <Compile Remove="Templates\Version2\DataTypes\CollectionClass.cs" />
+    <Compile Remove="Templates\Version2\DataTypes\CollectionClass2.cs" />
     <Compile Remove="Templates\Version2\DataTypes\DerivedClass.cs" />
     <Compile Remove="Templates\Version2\DataTypes\Enumeration.cs" />
     <Compile Remove="Templates\Version2\DataTypes\EnumerationValue.cs" />
@@ -474,8 +479,10 @@
     <EmbeddedResource Include="Templates\Version2\BrowseName.cs" />
     <EmbeddedResource Include="Templates\Version2\ConstantsFile.cs" />
     <EmbeddedResource Include="Templates\Version2\DataTypes\ArrayProperty.cs" />
+    <EmbeddedResource Include="Templates\Version2\DataTypes\Class2.cs" />
     <EmbeddedResource Include="Templates\Version2\DataTypes\Class.cs" />
     <EmbeddedResource Include="Templates\Version2\DataTypes\ClassWithOptionalFields.cs" />
+    <EmbeddedResource Include="Templates\Version2\DataTypes\CollectionClass2.cs" />
     <EmbeddedResource Include="Templates\Version2\DataTypes\CollectionClass.cs" />
     <EmbeddedResource Include="Templates\Version2\DataTypes\DerivedClass.cs" />
     <EmbeddedResource Include="Templates\Version2\DataTypes\Enumeration.cs" />
